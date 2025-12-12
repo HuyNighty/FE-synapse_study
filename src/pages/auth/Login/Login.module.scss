@@ -1,0 +1,121 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.container {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.header {
+  margin-bottom: 2rem;
+
+  h1 {
+    color: var(--primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+  text-align: left;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-main);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+}
+
+.errorMsg {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btnSubmit {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.875rem;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.footer {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+
+  a {
+    color: var(--primary);
+    font-weight: 600;
+    margin-left: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
