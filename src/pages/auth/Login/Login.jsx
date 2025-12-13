@@ -1,11 +1,11 @@
+import { useState } from "react";
 import classNames from "classnames/bind";
-import styles from "./Login.module.scss";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { FaUser, FaLock, FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import styles from "./Login.module.scss";
 import authService from "../../../services/authService";
+import Button from "../../../components/common/Button";
 
 const cx = classNames.bind(styles);
 
@@ -16,6 +16,7 @@ function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -24,15 +25,17 @@ function Login() {
 
     try {
       const response = await authService.login(data.username, data.password);
-
       const { token } = response.result;
-
       localStorage.setItem("accessToken", token);
-
       navigate("/");
     } catch (error) {
-      const msg = error.response?.data?.message || "Đăng nhập thất bại";
-      toast.error(msg);
+      const msg =
+        error.response?.data?.message ||
+        "Tài khoản hoặc mật khẩu không chính xác";
+      setError("root", {
+        type: "manual",
+        message: msg,
+      });
     }
   };
 
@@ -62,7 +65,7 @@ function Login() {
               <FaUser className={cx("icon")} />
               <input
                 type="text"
-                placeholder="Nhập username hoặc email"
+                placeholder="Nhập tài khoản hoặc email"
                 className={errors.username ? cx("inputError") : ""}
                 {...register("username", {
                   required: "Vui lòng nhập tài khoản",
@@ -108,10 +111,27 @@ function Login() {
             )}
           </div>
 
+          {errors.root && (
+            <div
+              className={`${cx("errorMsg")} animate-shake`}
+              style={{
+                textAlign: "center",
+                marginBottom: "1rem",
+                marginTop: "-0.5rem",
+              }}
+            >
+              {errors.root.message}
+            </div>
+          )}
+
           <div className="animate-fadeUp delay-400">
-            <button
+            <Button
+              primary
+              width="100%"
+              shine
+              scale
               type="submit"
-              className={`${cx("btnSubmit")} hover-lift`}
+              small
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -119,15 +139,15 @@ function Login() {
               ) : (
                 "Đăng Nhập"
               )}
-            </button>
+            </Button>
           </div>
         </form>
 
         <div className={`${cx("footer")} animate-fadeIn delay-500`}>
-          Chưa có tài khoản?{" "}
-          <Link to="/register" className="hover-scale">
+          Chưa có tài khoản?
+          <Button small text={1} to="/register" className="hover-scale">
             Đăng ký ngay
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

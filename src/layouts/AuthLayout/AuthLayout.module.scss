@@ -4,7 +4,7 @@
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  background-color: #f3f4f6;
+  background-image: url("https://i.pinimg.com/1200x/41/2e/a7/412ea792b6963690a4a9dce67b73f216.jpg");
   padding: 2rem;
   overflow: hidden;
 }
@@ -70,7 +70,7 @@
   .imageWrapper {
     width: 100%;
     height: 100%;
-    background-image: url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop");
+    background-image: url("https://i.pinimg.com/1200x/41/2e/a7/412ea792b6963690a4a9dce67b73f216.jpg");
     background-size: cover;
     background-position: center;
     position: relative;
@@ -141,6 +141,7 @@
   }
 
   .quote {
+    font-style: italic;
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.3;
