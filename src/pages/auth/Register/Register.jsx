@@ -1,34 +1,38 @@
+import { useState } from "react";
 import classNames from "classnames/bind";
-import styles from "./Login.module.scss"; // Tận dụng lại CSS của Login cho đồng bộ
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import {
   FaUser,
   FaLock,
   FaEnvelope,
   FaIdCard,
   FaSpinner,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
-import authService from "../../services/authService";
+import styles from "./Register.module.scss";
+import authService from "../../../services/authService";
+import Button from "../../../components/common/Button";
 
 const cx = classNames.bind(styles);
 
 function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Theo dõi giá trị password để check khớp với confirmPassword
   const password = watch("password");
 
   const onSubmit = async (data) => {
-    // Giả lập delay loading
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     try {
@@ -40,21 +44,25 @@ function Register() {
         lastName: data.lastName,
       });
 
-      toast.success("Đăng ký thành công! Hãy đăng nhập. 🎉");
-      navigate("/login"); // Chuyển về trang Login
+      navigate("/login");
     } catch (error) {
-      const msg = error.response?.data?.message || "Đăng ký thất bại";
-      toast.error(msg);
+      const msg =
+        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+      setError("root", {
+        type: "manual",
+        message: msg,
+      });
     }
   };
 
+  const handleSafeSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(onSubmit)(e);
+  };
+
   return (
-    <div className={cx("wrapper")}>
-      {/* Container rộng hơn xíu cho form đăng ký */}
-      <div
-        className={`${cx("container")} animate-scaleIn`}
-        style={{ maxWidth: "500px" }}
-      >
+    <div style={{ width: "100%" }}>
+      <div className={`${cx("container")} animate-scaleIn`}>
         <div className={cx("header")}>
           <h1 className="animate-fadeSlideDown">Tạo tài khoản</h1>
           <p className="animate-fadeSlideDown delay-100">
@@ -62,8 +70,7 @@ function Register() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* --- Họ & Tên (Xếp cùng 1 dòng) --- */}
+        <form onSubmit={handleSafeSubmit}>
           <div
             style={{ display: "flex", gap: "15px" }}
             className="animate-fadeUp delay-200"
@@ -71,7 +78,7 @@ function Register() {
             <div className={cx("formGroup")} style={{ flex: 1 }}>
               <label>Họ</label>
               <div className={cx("inputWrapper")}>
-                <FaIdCard className={cx("icon")} />
+                <FaUser className={cx("icon")} />
                 <input
                   type="text"
                   placeholder="Họ"
@@ -89,7 +96,7 @@ function Register() {
             <div className={cx("formGroup")} style={{ flex: 1 }}>
               <label>Tên</label>
               <div className={cx("inputWrapper")}>
-                <FaIdCard className={cx("icon")} />
+                <FaUser className={cx("icon")} />
                 <input
                   type="text"
                   placeholder="Tên"
@@ -105,7 +112,6 @@ function Register() {
             </div>
           </div>
 
-          {/* --- Email --- */}
           <div className={`${cx("formGroup")} animate-fadeUp delay-300`}>
             <label>Email</label>
             <div className={cx("inputWrapper")}>
@@ -130,17 +136,16 @@ function Register() {
             )}
           </div>
 
-          {/* --- Username --- */}
           <div className={`${cx("formGroup")} animate-fadeUp delay-400`}>
             <label>Tên đăng nhập</label>
             <div className={cx("inputWrapper")}>
-              <FaUser className={cx("icon")} />
+              <FaIdCard className={cx("icon")} />
               <input
                 type="text"
-                placeholder="Chọn username độc nhất"
+                placeholder="Chọn tên tài khoản"
                 className={errors.username ? cx("inputError") : ""}
                 {...register("username", {
-                  required: "Vui lòng nhập username",
+                  required: "Vui lòng nhập tên tài khoản",
                   minLength: { value: 3, message: "Tối thiểu 3 ký tự" },
                 })}
               />
@@ -152,13 +157,12 @@ function Register() {
             )}
           </div>
 
-          {/* --- Password --- */}
           <div className={`${cx("formGroup")} animate-fadeUp delay-500`}>
             <label>Mật khẩu</label>
             <div className={cx("inputWrapper")}>
               <FaLock className={cx("icon")} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Tối thiểu 8 ký tự"
                 className={errors.password ? cx("inputError") : ""}
                 {...register("password", {
@@ -169,6 +173,18 @@ function Register() {
                   },
                 })}
               />
+              <button
+                type="button"
+                className={cx("togglePasswordBtn")}
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showPassword ? (
+                  <FaEye className={cx("toggleIcon")} />
+                ) : (
+                  <FaEyeSlash className={cx("toggleIcon")} />
+                )}
+              </button>
             </div>
             {errors.password && (
               <span className={`${cx("errorMsg")} animate-shake`}>
@@ -177,13 +193,12 @@ function Register() {
             )}
           </div>
 
-          {/* --- Confirm Password --- */}
           <div className={`${cx("formGroup")} animate-fadeUp delay-600`}>
             <label>Nhập lại mật khẩu</label>
             <div className={cx("inputWrapper")}>
               <FaLock className={cx("icon")} />
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Xác nhận mật khẩu"
                 className={errors.confirmPassword ? cx("inputError") : ""}
                 {...register("confirmPassword", {
@@ -191,6 +206,20 @@ function Register() {
                   validate: (val) => val === password || "Mật khẩu không khớp",
                 })}
               />
+              <button
+                type="button"
+                className={cx("togglePasswordBtn")}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={
+                  showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
+                }
+              >
+                {showConfirmPassword ? (
+                  <FaEye className={cx("toggleIcon")} />
+                ) : (
+                  <FaEyeSlash className={cx("toggleIcon")} />
+                )}
+              </button>
             </div>
             {errors.confirmPassword && (
               <span className={`${cx("errorMsg")} animate-shake`}>
@@ -199,11 +228,23 @@ function Register() {
             )}
           </div>
 
-          {/* --- Button --- */}
+          {errors.root && (
+            <div
+              className={`${cx("errorMsg")} animate-shake`}
+              style={{ textAlign: "center", marginBottom: "1rem" }}
+            >
+              {errors.root.message}
+            </div>
+          )}
+
           <div className="animate-fadeUp delay-700">
-            <button
+            <Button
+              primary
+              shine
+              scale
+              width="100%"
+              large
               type="submit"
-              className={`${cx("btnSubmit")} hover-lift`}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -211,15 +252,15 @@ function Register() {
               ) : (
                 "Đăng Ký Tài Khoản"
               )}
-            </button>
+            </Button>
           </div>
         </form>
 
         <div className={`${cx("footer")} animate-fadeIn delay-800`}>
           Đã có tài khoản?
-          <Link to="/login" className="hover-scale">
+          <Button text to="/login" style={{ padding: 0, marginLeft: "5px" }}>
             Đăng nhập ngay
-          </Link>
+          </Button>
         </div>
       </div>
     </div>
